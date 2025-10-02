@@ -1,0 +1,33 @@
+project:
+  type: website
+  output-dir  : docs
+
+website:
+  title: "Sunil Madhow"
+  description: "PhD student at UC San Diego (HDSI). Research: offline RL, non-parametric regression, online learning."
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: posts/index.qmd
+        text: Blog
+      - href: publications.qmd
+        text: Publications
+      - href: Sunil_Madhow_CV.pdf
+        text: CV
+    right:
+      - icon: github
+        href: https://github.com/SunilMadhow
+      - icon: linkedin
+        href: https://www.linkedin.com/in/sunil-madhow
+  search: true
+  page-navigation: true
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    html-math-method: katex
+
+execute:
+  freeze: auto

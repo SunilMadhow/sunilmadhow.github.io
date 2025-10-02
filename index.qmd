@@ -1,0 +1,17 @@
+---
+title: "Hi, I'm Sunil"
+format:
+  html:
+    toc: true
+---
+
+<img src="headshot.jpg" alt="Sunil Madhow headshot" style="max-width: 160px; border-radius: 12px; margin-bottom: 0.5rem;">
+
+I'm a PhD student at **UC San Diego (Halıcıoğlu Data Science Institute)**. I work on **statistical learning theory** and **adaptive algorithms** for real-world data, with interests in **offline reinforcement learning**, **non-parametric regression**, and **online learning**.
+
+- 📬 Email: <smadhow@ucsd.edu>
+- 🔗 Links: [Google Scholar](#), [GitHub](https://github.com/SunilMadhow), [LinkedIn](https://www.linkedin.com/in/sunil-madhow)
+- 🧪 Research areas: offline RL, non-parametric regression, online learning
+- 
+
+I am interested in designing theoretically principled algorithms for modern problems in statistics and machine learning. It is important to me that these algorithms be adaptive to the particular problem inst

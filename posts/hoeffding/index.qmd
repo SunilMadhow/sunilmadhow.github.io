@@ -1,0 +1,33 @@
+---
+title: "A clean proof of Hoeffding's inequality"
+date: 2025-09-16        # or just delete 'date' while testing
+published: true         # remove if you had set false anywhere
+---
+
+In the previous post, we made rather a meal out of proving the extremely simple fact that 
+$$\Pr[X > t] \leq e^{- \sup_\lambda \lambda x - \psi(\lambda)}$$
+
+where $\psi(\lambda) = \log \E \exp{lambda X}$ is the CGF of $X \sim P$. 
+
+In this post, I'll try to make up for it by giving a quick and clean proof of Hoeffding's inequality, based on the geometric properties established yesterday. 
+
+In upper bounding the CGF, Hoeffding's inequality -- which states that for $X \in [a, b]$ almost surely, $\psi(\lambda) \leq \E_P[X] + (b - a)^2/4$ -- allows us to lower bound the rate function, and therefore derive concrete concentration bounds. Let's just prove this thing. 
+
+The key point is that, as the log-partition function of the Esscher family of $P$, $\psi(\lambda)$ satisfies the following properties 
+
+- 1 $\psi'(\lambda) = \E_{P_{\lambda}}[X]$
+- 2 $\psi''(\lambda) = \Var_{P_{\lambda}}[X]$. 
+
+Taylor expanding $\psi$ around $0$ gives 
+
+$$\psi(\lambda) = \psi(0) + \psi'(0) + \psi''(\zeta)/2 \ \ \ \zeta \in [0, \lambda]$$
+
+so that 
+
+$$\psi(\lambda) = \E_P[X] + \Var_{P_{\lambda}}[X]$$
+
+The RV whose law is $P^{\lambda}$ is still bounded within $[a, b]$, so we have the uniform bound on its variance $(b - a)^2/2$ (worst case variance is equal pointmasses on each of $a$ and $b$). So 
+
+$$\psi(\lambda) = \E_P[X] + \frac{(b - a)^2}{4}$$
+
+So the Esscher family being an exponential family made our life super easy. More sophisticated concentration inequalities, like Bernstein and Bennet, have exactly the same template, but we exert finer control over the second moment. 

@@ -1,0 +1,6 @@
+---
+title: "Publications"
+---
+
+- **Rates for offline reinforcement learning with adaptively collected data** (L4DC 2025). With D. Qiao, M. Yin, and Y.-X. Wang. Preprint: <https://arxiv.org/abs/2306.1406>  
+- **AKORN: Adaptive knots generated online for regression splines** (ICML 2025). With D. Baby and Y.-X. Wang. Code: <https://github.com/SunilMadhow/AKORN>

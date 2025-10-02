@@ -1,0 +1,12 @@
+---
+title: "Blog"
+listing:
+  contents:
+    - "*/index.qmd"   # subfolders with index.qmd
+    - "*.qmd"         # single-file posts
+  sort: "date desc"
+  type: default
+  categories: true
+---
+
+Short research notes and updates.
