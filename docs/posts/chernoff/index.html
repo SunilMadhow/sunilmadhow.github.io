@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.24">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2025-09-15">
+
+<title>The Geometry of Prediction, Part I – Sunil Madhow</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dc55a5b9e770e841cd82e46aadbfb9b0.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-5b4ad623e5705c0698d39aec6f10cf02.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script>
+window.MathJax = {
+  tex: { macros: { E: "\\mathbb{E}", Cov: "\\operatorname{Cov}" } }
+};
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="../../index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Sunil Madhow</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../posts/index.html"> 
+<span class="menu-text">Blog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../publications.html"> 
+<span class="menu-text">Publications</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../Sunil_Madhow_CV.pdf"> 
+<span class="menu-text">CV</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/SunilMadhow"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/sunil-madhow"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">The Geometry of Prediction, Part I</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">September 15, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="part-1" class="level1">
+<h1>Part 1</h1>
+<p>I recently read <a href="https://x.com/abeirami/status/1963206009393930569">this</a> tweet by my friend, Ahmad Beirami. My approach to concentration inequalities has been quite utilitarian, and Ahmad’s tweet confirmed to me that I am missing out on some deep geometric intuition in statistics. This has led me to revisit some primitives of statistics with which I have long had merely a pragmatic alliance – among them the cumulant generating function, the Chernoff bound, and exponential families – with the hope of forging a firmer friendship.</p>
+<p>This note will be a preposterously overlong account of the Chernoff bound – one which will hopefully make clear what precisely is happening when we exponentiate before applying Markov’s inequality. There’s a cute geometric picture that, while standard, is often not presented in basic courses.</p>
+<p>Long term, I want to explain why the geometry that we discuss here bears on estimation theory and online algortihms. The second case is especially rremarkable, as it shows that we can use statistical tools in entirely adversarial scenarios.</p>
+<p>I don’t wish to get too bogged down in technical details. All the (in)equalities that follow hold under the mild assumption that they hold.</p>
+</section>
+<section id="exponential-families" class="level1">
+<h1>Exponential families</h1>
+<p>Let’s begin with a quick recap of exponential families. These are parametric statistical models that are computationally and theoretically favorable, for geometric reasons that will become clear in a moment.</p>
+<p>In its natural form, a parametric density <span class="math inline">\(p_\eta\)</span> is an exponential family if it has the form <span class="math display">\[p_\eta(x) = p(x) e^{\langle \eta, T(x)\rangle - A(\eta)}\]</span></p>
+<p>Exponential families have many nice properties, including the following</p>
+<ul>
+<li>1 <span class="math inline">\(\E_{p_\eta} [T(x)] = \nabla A |_\eta\)</span></li>
+<li>2 <span class="math inline">\(\Cov_\eta(T(x)) = \nabla^2 A |_\eta\)</span></li>
+<li>3 <span class="math inline">\(\E_\eta[e^{\lambda T(x)}] = A(\eta + \lambda) - A(\eta)\)</span></li>
+<li>4 Given data <span class="math inline">\(x_1, ... x_n \sim p_\eta\)</span>, the MLE for <span class="math inline">\(\eta\)</span>, <span class="math inline">\(\hat{\eta}\)</span> is satisfies <span class="math inline">\(\nabla_\eta A(\hat\eta) = \sum_i T(x_i)/n\)</span></li>
+<li>5 <span class="math inline">\(KL(p_\eta || p_\lambda) = D_A(\lambda || \eta)\)</span> where <span class="math inline">\(D_A\)</span> is the Bregman divergence under <span class="math inline">\(A\)</span>.</li>
+</ul>
+<p>These plain lemmas, which can be verified by simple computation, breed copiously amongst themselves to produce theorems that reveal the geometry that underlies so much of classical statistics. We’ll scrutinize their progeny later.</p>
+<p>For now, however, let us simply notice that, for any base (univariate) density <span class="math inline">\(p\)</span>, we can define an exponential family by multiplying it by <span class="math inline">\(e^{\lambda x}\)</span> and normalizing appropriately: <span class="math display">\[p_\lambda(x) = e^{\lambda x}p(x)/\E_p[e^{\lambda x}] = e^{\lambda x - \log \E [e^{\lambda X}]}p(x)\]</span> so that <span class="math inline">\(A(\lambda) = \psi(\lambda) = \log \E [e^{\lambda X}]\)</span> and <span class="math inline">\(\eta = \lambda\)</span>. Thus, whenever we linearly tilt a density, the C.G.F. enters the stage merely as a normalizing constant. However, in its capacity as the log-partition function of the so-called Esscher transform , the C.G.F. acquires an interesting role in defining the geometry of <span class="math inline">\(\lambda\)</span>-space</p>
+<p>If <span class="math inline">\(P\)</span> is a measure (as opposed to a density), we can define the tilted distribution through the Radon-Nikodym derivative <span class="math inline">\(\frac{dP_\lambda}{dP} = e^{\lambda x - \psi(\lambda)}\)</span>. In this note, one can rest assured that essentially nothing is lost by considering this to be a somewhat ostentatious rewrite of the definitional statement <span class="math inline">\(p_\lambda(x)/p(x) = e^{\lambda x - \psi(\lambda)}\)</span> .</p>
+<p><strong>Remark:</strong> We’ve already arrived at an interesting interpretation of the CGF of <span class="math inline">\(P\)</span>. It’s the convex potential whose Bregman divergence defines the KL divergence between linear tilts of <span class="math inline">\(P\)</span>. Why are linear tilts interesting? Read on!</p>
+</section>
+<section id="the-chernoff-bound" class="level1">
+<h1>The Chernoff Bound</h1>
+<p>Here is how the Chernoff argument typically runs in a Master’s class. We have an arbitrary random variable, <span class="math inline">\(X \sim P\)</span>, and we wish to bound its tail probability, <span class="math display">\[\Pr[X \geq t] \ ; \mathrm{where} \  t &gt; \E_P[X]\]</span></p>
+<p>We begin by mercilessly mocking the feeble bounds produced by Markov and Chebyshev – they retire, dejected. The professor now pulls the following rabbit out of his or her hat: <span class="math display">\[\mathrm{Pr}[X \geq t] = \inf_\lambda \mathrm{Pr}[e^{\lambda X} \geq e^{\lambda t}] \leq \inf_\lambda e^{- \lambda t + \log \E[e^{\lambda X}]]} = e^{-I(t)} \]</span></p>
+<p>and enigmatically terms <span class="math inline">\(I\)</span> the “rate function”. Together, the class cranks out pages of calculation to get supertight binomial tail bounds, or possibly characterize subgaussian or subexponential random variables. Meanwhile, the rabbit scampers away into a nearby shrub, never to reappear.</p>
+<p>Why did exponentiating magically make Markov’s inequality good again? One may dimly perceive that exponentiation pushes us towards the case of two point masses, where Markov is tight. But personally, if I can’t draw it, I don’t understand it.</p>
+<p>In order to improve our understanding, we’ll prove the Chernoff bound three different ways, with a special focus on understanding where the looseness in the inequality comes from.</p>
+<section id="proof-2-circumscribe" class="level3">
+<h3 class="anchored" data-anchor-id="proof-2-circumscribe">Proof 2: Circumscribe</h3>
+<p>As a starting point towards making the Chernoff derivation look less miraculous, here’s one rewrite of the standard proof, using the numerical inequality <span class="math inline">\(1\{x \geq t\} \leq e^{\lambda(x - t)}\)</span> for any <span class="math inline">\(\lambda &gt; 0\)</span>:</p>
+<p><span class="math display">\[\Pr[X \geq t] = \E[1\{X \geq t\}] \]</span> <span class="math display">\[= \E[\inf_\lambda e^{\lambda (X - t)}] \]</span> <span class="math display">\[\leq \inf_\lambda \E[e^{\lambda (X - t)}] = \inf_\lambda e^{\psi(\lambda) - \lambda t} = e^{-I(t)}\]</span></p>
+<p>So exponentiating and applying Markov’s inequality is the same as inscribing the tail-indicators induced by <span class="math inline">\(X\)</span> in an exponential, and then choosing its rate (<span class="math inline">\(\lambda\)</span>) to optimize this surrogate on average over <span class="math inline">\(X\)</span>. In this chain, the slack is in <em>moving the infinum out of the expectation</em>. The slack of the Chernoff bound is exactly the <span class="math inline">\(L^1(P)\)</span>-norm of the slack in the numerical inequality.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="circumscribe.png" class="img-fluid figure-img" width="500"></p>
+<figcaption>We can produce an exponential upper bound for the step function for every rate <span class="math inline">\(\lambda &gt; 0\)</span>. The best upper bound is the one with smallest <span class="math inline">\(L^1(P)\)</span> norm.</figcaption>
+</figure>
+</div>
+<p>Incidentally, what we have just seen is that we can recreate <span class="math inline">\(\Pr[X \geq t]\)</span> by taking the lower <span class="math inline">\(\lambda\)</span>-envelope of the <span class="math inline">\(t\)</span>-curves <span class="math inline">\(\psi(\lambda) - \lambda t\)</span> as we sweep <span class="math inline">\(\lambda \in [0, \infty]\)</span>.</p>
+</section>
+<section id="proof-3-tilt" class="level3">
+<h3 class="anchored" data-anchor-id="proof-3-tilt">Proof 3: Tilt</h3>
+<p>Let’s go again. This time, we will write the tail as an importance-weighted expectation under the distribution <span class="math inline">\(P_\lambda\)</span>, which you’ll recall is the distribution that satisfies <span class="math inline">\(\frac{dP_\lambda}{dP}(x) = e^{\lambda x - \log E[e^{\lambda X}]}\)</span>. For any <span class="math inline">\(\lambda &gt; 0\)</span>, we have</p>
+<p><span class="math display">\[\Pr[X \geq t] = \E[1\{X \geq t\}] = \E_{P_\lambda}[\frac{dP}{dP_\lambda}1\{X \geq t\}]\]</span> <span class="math display">\[ \leq e^{- \lambda t + \psi(\lambda)}\Pr_{P_\lambda}[X \geq t]\]</span></p>
+<p>This argument makes the call to Markov explicit, reminding us that all Markov does is bound the probability of the upper tail by 1. So what we’re doing when we apply the Chernoff method is linearly <em>tilting</em> the base measure <span class="math inline">\(P\)</span> according to some slope <span class="math inline">\(\lambda\)</span> and bounding the tilted tail by <span class="math inline">\(1\)</span>. In doing this, we incur an additional term, <span class="math inline">\(e^{-\lambda t + \psi(\lambda)}\)</span>, which is optimized by setting the derivative to zero: <span class="math inline">\(\psi'(\lambda^*) = t\)</span>. By Property 1 of exponential families, this actually tells us that, at the optimal tilt, <span class="math inline">\(\lambda^*\)</span> <span class="math display">\[\E_{P_{\lambda^*}}[X] = \psi'(\lambda^*) = t\]</span> That is, <span class="math inline">\(\lambda^*\)</span> is the (unique) tilt that fixes the tilted mean to be <span class="math inline">\(t\)</span>!</p>
+<p>What is <span class="math inline">\(e^{-I(t)} = e^{-\lambda^* t + \psi(\lambda^*)}\)</span>? Well,<br>
+<span class="math display">\[KL(P_{\lambda^*} || P) = \lambda^* \E_{P_{\lambda^*}}[X] - \psi(\lambda^*) = \lambda^*t - \psi(\lambda^*) = I(t)\]</span></p>
+<p>This is a little better. The Chernoff bound is going to linearly tilt <span class="math inline">\(P\)</span> until the tilted mean is <span class="math inline">\(t\)</span>, and then pay for doing so with <span class="math inline">\(e^{-I(t)} = e^{-KL(P_{\lambda^*} || P)}\)</span>. So the more we have to linearly tilt <span class="math inline">\(P\)</span> to have the event <span class="math inline">\(t\)</span> be unsurprising, the tighter our tail bound is.</p>
+<p>Here’s a pithy phrasing for the bound, as bonus. we take the MLE estimate for <span class="math inline">\(\lambda\)</span> among the family of linear tilts of <span class="math inline">\(P\)</span> under the observation <span class="math inline">\(x = t\)</span>, and see how far it is from <span class="math inline">\(P\)</span> in KL divergence, which is the Bregman divergence <span class="math inline">\(D_\phi(\lambda^* || 0)\)</span>. This can be seen Properties 4 and 5 of Exponential Families above.</p>
+</section>
+<section id="proof-四-project" class="level3">
+<h3 class="anchored" data-anchor-id="proof-四-project">Proof 四: Project</h3>
+<p>And yet still the previous two proofs feel slightly ad-hoc. The first relies on a numerical inequality and the second relies on producing <span class="math inline">\(P_\lambda\)</span> as an ansatz <a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Here’s a more geometric perspective.</p>
+<p>Recall that <span class="math inline">\(P\)</span> is our law for <span class="math inline">\(X\)</span>, and define <span class="math inline">\(E = \{X \geq t\}\)</span>. Let’s also define <span class="math inline">\(Q = P(\cdot | E)\)</span>, which lies in the closed, convex set of measures <span class="math inline">\(C_t = \{\mu \ : \ \E_\mu[X] \geq t\}\)</span>. Notice that we then have <span class="math inline">\(KL(Q || P) = -\log P(E)\)</span>. This means that any measure <span class="math inline">\(H\)</span> with <span class="math inline">\(KL(H || P) \leq KL(Q || P)\)</span> provides an upper bound on <span class="math inline">\(P(E)\)</span> via <span class="math display">\[\log P(E) = -KL(Q || P) \leq -  KL(H || P)\]</span></p>
+<p>To be principled, we can choose <span class="math inline">\(H = \arg\min_{\mu \ : \ \E_\mu[X] \geq t} KL(\mu || P)\)</span>, which will always satisfy the desired property. We will now see that <span class="math inline">\(H = P_{\lambda^*}\)</span> from the previous section, and then tie things up by using convex duality to connect this to the rate function.</p>
+<p><strong>(Projection identity)</strong> For <span class="math inline">\(X \sim P\)</span>, the solution to <span class="math inline">\(\arg \min_{\mu \ll P \ : \ \E_{\mu}X \geq t} KL(\mu || P)\)</span> is <span class="math inline">\(P_{\lambda^*}\)</span>.</p>
+<p><em>Proof</em>. For any feasible <span class="math inline">\(\mu\)</span>:</p>
+<p><span class="math display">\[KL(\mu || P) = \E_\mu [\log \frac{d\mu}{dP_{\lambda^*}}\frac{dP_\lambda}{dP}] = KL(\mu || P_{\lambda^*}) + \E_{\mu}[\lambda^* X] - \psi_P(\lambda^*)\]</span></p>
+<p>The first term is positive, and is zeroed out by <span class="math inline">\(\mu = P_{\lambda^*}\)</span>. The second term is at least <span class="math inline">\(\lambda^* t\)</span>, and is exactly <span class="math inline">\(\lambda^* t\)</span> for <span class="math inline">\(P_{\lambda^*}\)</span>. Thus, <span class="math inline">\(P_{\lambda^*}\)</span> is a solution to the problem. The last term is independent of <span class="math inline">\(\mu\)</span>.</p>
+<p><em>qed</em></p>
+<p>So we’ve proven <span class="math inline">\(\log P[X \geq t] \leq  I(t) = -KL(P_{\lambda^*} || P) = -\min_{\mu \ll P \ : \ \E_\mu X \geq t} KL(\mu || P)\)</span>. The first equality was already known to us from the previous section, but the second is new.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="project.png" class="img-fluid figure-img" width="500"></p>
+<figcaption>The KL projection of <span class="math inline">\(P\)</span> onto the set of measures <span class="math inline">\(\{Q \ : \ \E_Q[X] \geq t\}\)</span> defines the rate function</figcaption>
+</figure>
+</div>
+</section>
+<section id="duality" class="level3">
+<h3 class="anchored" data-anchor-id="duality">Duality</h3>
+<p>We’ve now motivated the Chernoff bound by (a) a numerical inequality (b) a change of measure argument (c) a geometric argument in measure space. These apparently distinct tricks are really just one – an eccentric old codger who wears many hats. We can expose his bald pate using the language of duality.</p>
+<p>The Legendre-Fenchel dual of a function <span class="math inline">\(f: V \rightarrow \mathbb{R}\)</span>, where <span class="math inline">\(V\)</span> is a real vector space, is defined as <span class="math inline">\(f^*: V^* \rightarrow \mathbb{R}\)</span> by <span class="math display">\[
+f^*(\lambda) = \sup_{x \in V} \langle \lambda, x \rangle - f(x)
+\]</span> where <span class="math inline">\(\lambda \in V^*\)</span>, the dual space of <span class="math inline">\(V\)</span>, and <span class="math inline">\(\langle \lambda, x \rangle\)</span> denotes the action of the linear functional <span class="math inline">\(\lambda\)</span> on <span class="math inline">\(x\)</span>. Intuitively, <span class="math inline">\(f^*(\lambda)\)</span> gives the maximal offset needed so that the affine functional <span class="math inline">\(x \mapsto \langle \lambda, x \rangle - f^*(\lambda)\)</span> lies below <span class="math inline">\(f(x)\)</span> everywhere. For convex <span class="math inline">\(f\)</span>, the biconjugate <span class="math inline">\(f^{**}\)</span> recovers <span class="math inline">\(f\)</span>, i.e., <span class="math inline">\(f^{**} = f\)</span>.</p>
+<p>The fenchel duality principle says that (under mild conditions), if <span class="math inline">\(f: V \rightarrow R\)</span>, <span class="math inline">\(g: W \rightarrow R\)</span> are functions on vector spaces <span class="math inline">\(V\)</span> and <span class="math inline">\(W\)</span>, and <span class="math inline">\(A: V \rightarrow W\)</span> is linear, then <span class="math display">\[\inf_{x \in V} f(x) + g(Ax) = \sup_{y \in W^*} -f^*(A^*y) - g^*(-y)\]</span></p>
+<p>Where <span class="math inline">\(A^*\)</span> is the adjoint of <span class="math inline">\(A\)</span>. Suppose we wish to handle the constraint <span class="math inline">\((Ax)_i \geq t_i\)</span>. We can do this by defining <span class="math inline">\(\iota_{t_i}(z) = \infty \times 1\{z \geq t_i\}\)</span>. We then have <span class="math inline">\(\iota^*_{t_i}(y) = \sup_z z\times y - \iota(z) = \sup_{z \leq t_i} z \times y = t_i y\)</span>.</p>
+<p>Let’s make an observation here, so that we can instantiate this machinery for our problem:</p>
+<p><strong>(Donsker-Varadhan)</strong> Let <span class="math inline">\(f\)</span> be a function and <span class="math inline">\(X \sim P\)</span>. Then <span class="math display">\[\log \E \exp f(X) = \sup_{Q \ll P} \E_Q f(x) - KL(Q || P)\]</span> <em>Proof:</em> Let <span class="math inline">\(P_f\)</span> be such that <span class="math inline">\(dP_f/dP = e^{f(x)}/\E_P[e^{f(x)}]\)</span> <span class="math display">\[\max_Q \E_Q[f(X)] - KL(Q || P) = \max_Q \E_Q[f(x)] - \E_Q[\log \frac{dQ}{dP_f}\frac{dP_f}{dP}]\]</span> <span class="math display">\[= \max_Q \E_Q[f(x)] - KL(Q || P_f) - \E_Q[f(X)] + \log \E_P \exp f(X)\]</span> <span class="math display">\[ = \max_Q \log \E_P \exp f(X) - KL(Q || P_f)\]</span></p>
+<p>which is clearly achieved by <span class="math inline">\(Q = P_f\)</span> and takes value <span class="math inline">\(\log \E_P \exp f(X)\)</span></p>
+<p><em>qed</em></p>
+<p>This is duality between the functionals <span class="math inline">\(\Lambda(f) := (f \mapsto \log \E_P \exp f(X))\)</span> and <span class="math inline">\(KL(\cdot || P): Q \mapsto KL(Q || P)\)</span>, where measures <span class="math inline">\(Q\)</span> act on functions <span class="math inline">\(f\)</span> via <span class="math inline">\(\langle Q, f\rangle := \E_Q f(X)\)</span>. Because <span class="math inline">\(\Lambda(f)\)</span> is convex, we have as a corollary <span class="math display">\[KL(Q || P) = \sup_f \E_Q[f(X)] - \Lambda(f)\]</span></p>
+<p>This adds convex structure to the dualities between functions spaces and measures spaces that are studied in analysis<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, allowing us to associate a function <span class="math inline">\(f\)</span> with the measure that witnesses the supremum in Donsker-Varadhan (and vice-versa).</p>
+</section>
+<section id="duality-unifies-the-proofs" class="level3">
+<h3 class="anchored" data-anchor-id="duality-unifies-the-proofs">Duality unifies the proofs</h3>
+<p>Suppose we restrict ourselves to a finite list of test functions, <span class="math inline">\(f_1, ... f_d\)</span>. Let us consider the following problem</p>
+<p><span class="math display">\[\min_{Q \ \ \E_Q[f_i(X)] \geq t_i \ i = 1, ... d}KL(Q || P)\]</span></p>
+<p>which is clearly a more general version of the program studied in Proof 四.</p>
+<p>Let <span class="math inline">\(AQ = [\E_Q[f_1(X)], ... \E_Q[f_d(X)]]^T\)</span>. Its adjoint is <span class="math inline">\(A^*: \lambda \mapsto \sum_i \lambda_i f_i\)</span> (check!). By Fenchel duality, we have that</p>
+<p><span class="math display">\[\min_{Q \ \ \E_Q[f_i(X)] \geq t_i}KL(Q || P) = \min_Q KL(Q || P) + \sum_{i = 1}^d\iota_{t_i}(\E_Q[f_i(X)])\]</span> <span class="math display">\[= \sup_\lambda - \Lambda(A^*\lambda) - \sum_{i = 1}^d \iota^*_{t_i}(\lambda_i)\]</span> <span class="math display">\[= \sup_\lambda \lambda_i t_i - \log \E_P \exp{\sum_i \lambda_i f_i(X)}\]</span></p>
+<p>So optimizing over an <span class="math inline">\(f\)</span>-constrained set of measures in the primal corresponds to optimizing the penalized CGF over the <span class="math inline">\(f\)</span>-span in the dual. In particular, our test functions define the constraints <span class="math inline">\(\E_Q[f_i(X)] \geq t_i\)</span> for <span class="math inline">\(i = 1, ..., d\)</span>. Let’s call these <span class="math inline">\(C_f\)</span>.</p>
+<p>Recalling Proof 4, we can notice that as long as the conditional law <span class="math inline">\(P(\cdot | E)\)</span> lies in the constraint set, the projection <span class="math inline">\(P^* = \min_{Q \in C_f}KL(Q || P)\)</span> always defines an upper bound. By adding more constraints to <span class="math inline">\(C_f\)</span> that are satisfied by <span class="math inline">\(P(\cdot | E)\)</span>, we make <span class="math inline">\(P^*\)</span> closer to <span class="math inline">\(P(\cdot | E)\)</span> and tighten our bound. In the dual, this corresponds to finding the tightest upper bound (in the <span class="math inline">\(L^1(P)\)</span>-norm) to <span class="math inline">\(\sum_i 1\{f_i(x) \geq t_i\}\)</span> that is of the form <span class="math inline">\(e^{\sum_{i = 1}^d \lambda_i f_i(x)}\)</span>. When the events <span class="math inline">\(\{f_i(x) \geq t_i\}\)</span> contain the event <span class="math inline">\(\{x \geq t\}\)</span> (as is the case, e.g.&nbsp;when <span class="math inline">\(f_i\)</span> is an increasing function and <span class="math inline">\(t_i = f_i(t)\)</span>), this translates into a tail bound for <span class="math inline">\(x\)</span>. This is the dual phrasing of what in the primal was the requirement that the constraint set contain <span class="math inline">\(P(\cdot | E)\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="many_constraint_sets.png" class="img-fluid figure-img" width="500"></p>
+<figcaption>As we add constraints that are satisfied by the conditional law, <span class="math inline">\(P(\cdot | E)\)</span>, we tighten our approximation, at the cost of making the bound less tractable. As we shall see in the next section, a single linear constraint is asymptotically optimal, in the sense that all other constraints that are satisfied by <span class="math inline">\(P(\cdot | E)\)</span> will become inactive as <span class="math inline">\(n \to \infty\)</span>.</figcaption>
+</figure>
+</div>
+<p>The Chernoff bound instantiates this machinery with just one, Spartan test function: <span class="math inline">\(f_1(x) = x\)</span>, as we saw in Proofs 2, 3, and 4. As we have already seen, optimizing over a single linear test function corresponds to placing a single, linear mean constraint in measure space. You can use Donsker-Varadhan to verify that the <span class="math inline">\(KL\)</span> distance from <span class="math inline">\(P(\cdot | E)\)</span> to <span class="math inline">\(P_{\lambda^*}\)</span> is exactly the <span class="math inline">\(L^1(P)\)</span> error of <span class="math inline">\(e^{\lambda^*(x - t)}\)</span> against <span class="math inline">\(1\{x \geq t\}\)</span>.</p>
+<p><strong>Remark:</strong> We can bring this back to exponential families, too. In particular, we define an exponential family with parameters, <span class="math inline">\(\lambda_1, ..., \lambda_d\)</span> and sufficient statistics <span class="math inline">\(f = [f_1, ..., f_d]\)</span>: <span class="math display">\[p_{\lambda, f} = p(x) e^{\langle \lambda, f(x)\rangle - \Lambda_f (\lambda)}\]</span> where the log partition function is <span class="math inline">\(\Lambda_f = \log \E[e^{\sum_{i = 1}^d \lambda_if_i(x)}]\)</span>. Then, finding the MLE under <span class="math inline">\([f_1(x), ... f_d(x)] = [t_1, ... t_d]\)</span> corresponds finding <span class="math inline">\(\lambda^* = \arg\max_{\lambda_1, ..., \lambda_d} \langle \lambda, f\rangle - \Lambda_f(\lambda)\)</span>. By Property 5, the KL divergence <span class="math inline">\(KL(p_{\lambda^*, f} || p)\)</span> is <span class="math display">\[KL(p_{\lambda^*, f} || p) = D_\Lambda\]</span></p>
+<p>Why don’t we use more test functions? This would make our approximation <span class="math inline">\(P_f\)</span> closer to <span class="math inline">\(P(\cdot | E)\)</span>. It turns out that a single linear test-function is sufficient to get the right bound as <span class="math inline">\(n \to \infty\)</span>. This is something we can intuit using the formulation from Proof 3.</p>
+</section>
+</section>
+<section id="lower-bound" class="level1">
+<h1>Lower bound</h1>
+<p>Let us now consider the tails of the random variable <span class="math inline">\(X^n := \frac{1}{n}\sum_{i = 1}^n X_i\)</span>, and prove a lower bound that says that we don’t gain anything (asymptotically) by expanding our list of test functions. We call <span class="math inline">\(X^n\)</span>’s’ law <span class="math inline">\(P_n\)</span>, derived from the marginal law <span class="math inline">\(X \sim P\)</span>.</p>
+<p>It’s hard to get a lower bound out of the geometric perspective; the KL divergence, ever indifferent to the axioms of distances, is more useful for getting upper bounds. Therefore, we return to Proof 3 to show that the change of measure argument is tight.</p>
+<p>In particular, we’ll gesture at Cramer’s theorem, which says that if the CGF is finite in a neighborhood of zero, then <span class="math display">\[\lim\sup \frac{1}{n} \log \Pr[X^n \geq t] = -I(t)\]</span></p>
+<p>Let’s just define <span class="math inline">\(A_n = \{X^n \in [t, t + \epsilon\}\)</span> for some <span class="math inline">\(\epsilon &gt; 0\)</span>. Now, defining <span class="math inline">\(P_{\lambda^* _n} = (P_{\lambda^*})^{\otimes n}\)</span>, we have</p>
+<p><span class="math display">\[P_n(E) = \E_{P_n}[1\{A_n\}]\]</span> <span class="math display">\[= \E_{P_{\lambda^*, n}}[e^{\lambda^* X_n - \psi_n(\lambda^*)}1\{A_n\}]\]</span> <span class="math display">\[\geq P_{\lambda^*_n}(A_n) \times  e^{\lambda^* (t + \epsilon) - \psi_n(\lambda^*)}\]</span> <span class="math display">\[=  (\frac{1}{2} + o(1)) \times e^{-n I(t) + \lambda^* \epsilon}\]</span></p>
+<p>where the final line holds by CLT applied to <span class="math inline">\(P_{\lambda^*, n}\)</span>. We can now take <span class="math inline">\(\epsilon \downarrow 0\)</span>. In English, the Proof 3 perspective allows us to apply exact limit theorems to the tilted distribution at the cost of the likelihood ratio evaluated within an <span class="math inline">\(\epsilon\)</span>-ball around <span class="math inline">\(t\)</span>. Shrinking the <span class="math inline">\(\epsilon\)</span> makes the likelihood ratio appraoch <span class="math inline">\(e^{-n I(t)}\)</span>.</p>
+</section>
+<section id="next-time" class="level1">
+<h1>Next time</h1>
+<p>We’ll see how algorithms for online prediction and boosting use nearly the same procedures to get regret bounds in adversarial settings.</p>
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>Interestingly, in physics, Boltzmann arrived at exponential tilts after using Stirling’s formula to relax the multinomial distribution, and Einstein later took them as an ansatz for counting the number of microstates that correspond to a macrostate in a system with interactions (<a href="https://www.youtube.com/watch?v=Wxslcy56KFM">Hugo Touchette</a> )<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>To be concrete, we can take the set of measures to be those with densities wrt <span class="math inline">\(P\)</span>, which we can think about as the sphere in <span class="math inline">\(L^1(P)\)</span>. The dual variable then rightly in <span class="math inline">\(L^\infty(P)\)</span>. Then we denote <span class="math inline">\(\langle Q, f\rangle = \E_Q[f(X)]\)</span>.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
