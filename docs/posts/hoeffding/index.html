@@ -69,23 +69,14 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
+<script>
+window.MathJax = {
+  tex: { macros: { E: "\\mathbb{E}", Cov: "\\operatorname{Cov}" } }
+};
+</script>
 
-  <script>window.backupDefine = window.define; window.define = undefined;</script><script src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
-  <script>document.addEventListener("DOMContentLoaded", function () {
- var mathElements = document.getElementsByClassName("math");
- var macros = [];
- for (var i = 0; i < mathElements.length; i++) {
-  var texText = mathElements[i].firstChild;
-  if (mathElements[i].tagName == "SPAN") {
-   katex.render(texText.data, mathElements[i], {
-    displayMode: mathElements[i].classList.contains('display'),
-    throwOnError: false,
-    macros: macros,
-    fleqn: false
-   });
-}}});
-  </script>
-  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -204,22 +195,22 @@ window.Quarto = {
 </header>
 
 
-<p>In the previous post, we made rather a meal out of proving the extremely simple fact that <span class="math display">\Pr[X &gt; t] \leq e^{- \sup_\lambda \lambda x - \psi(\lambda)}</span></p>
-<p>where <span class="math inline">\psi(\lambda) = \log \E \exp{lambda X}</span> is the CGF of <span class="math inline">X \sim P</span>.</p>
-<p>In this post, I’ll try to make up for it by giving a quick and clean proof of Hoeffding’s inequality, based on the geometric properties established yesterday.</p>
-<p>In upper bounding the CGF, Hoeffding’s inequality – which states that for <span class="math inline">X \in [a, b]</span> almost surely, <span class="math inline">\psi(\lambda) \leq \E_P[X] + (b - a)^2/4</span> – allows us to lower bound the rate function, and therefore derive concrete concentration bounds. Let’s just prove this thing.</p>
-<p>The key point is that, as the log-partition function of the Esscher family of <span class="math inline">P</span>, <span class="math inline">\psi(\lambda)</span> satisfies the following properties</p>
+<p>In the previous post, we made rather a meal out of proving the extremely simple fact that <span class="math display">\[\Pr[X \geq t] \leq e^{- \sup_\lambda \lambda x - \psi(\lambda)}\]</span></p>
+<p>where <span class="math inline">\(\psi(\lambda) = \log \E \exp{\lambda X}\)</span> is the CGF of <span class="math inline">\(X \sim P\)</span>.</p>
+<p>In this post, I’ll try to make up for it by giving a quick and clean proof of Hoeffding’s lemma, based on the geometric properties established yesterday.</p>
+<p>In upper bounding the CGF, Hoeffding’s inequality – which states that for <span class="math inline">\(X \in [a, b]\)</span> almost surely, <span class="math inline">\(\psi(\lambda) \leq \lambda \E_P[X] + \lambda^2(b - a)^2/8\)</span> – allows us to lower bound the rate function, and therefore derive concrete concentration bounds. Let’s just prove this thing.</p>
+<p>The key point is that, as the log-partition function of the Esscher family of <span class="math inline">\(P\)</span>, <span class="math inline">\(\psi(\lambda)\)</span> satisfies the following properties</p>
 <ul>
-<li>1 <span class="math inline">\psi'(\lambda) = \E_{P_{\lambda}}[X]</span></li>
-<li>2 <span class="math inline">\psi''(\lambda) = \Var_{P_{\lambda}}[X]</span>.</li>
+<li>1 <span class="math inline">\(\psi'(\lambda) = \E_{P_{\lambda}}[X]\)</span></li>
+<li>2 <span class="math inline">\(\psi''(\lambda) = \mathrm{Var}_{P_{\lambda}}[X]\)</span>.</li>
 </ul>
-<p>Taylor expanding <span class="math inline">\psi</span> around <span class="math inline">0</span> gives</p>
-<p><span class="math display">\psi(\lambda) = \psi(0) + \psi'(0) + \psi''(\zeta)/2 \ \ \ \zeta \in [0, \lambda]</span></p>
+<p>Taylor expanding <span class="math inline">\(\psi\)</span> around <span class="math inline">\(0\)</span> gives</p>
+<p><span class="math display">\[\psi(\lambda) = \psi(0) + \lambda \psi'(0) + \lambda^2\psi''(\zeta)/2 \ \ \ \zeta \in [0, \lambda]\]</span></p>
 <p>so that</p>
-<p><span class="math display">\psi(\lambda) = \E_P[X] + \Var_{P_{\lambda}}[X]</span></p>
-<p>The RV whose law is <span class="math inline">P^{\lambda}</span> is still bounded within <span class="math inline">[a, b]</span>, so we have the uniform bound on its variance <span class="math inline">(b - a)^2/2</span> (worst case variance is equal pointmasses on each of <span class="math inline">a</span> and <span class="math inline">b</span>). So</p>
-<p><span class="math display">\psi(\lambda) = \E_P[X] + \frac{(b - a)^2}{4}</span></p>
-<p>So the Esscher family being an exponential family made our life super easy. More sophisticated concentration inequalities, like Bernstein and Bennet, have exactly the same template, but we exert finer control over the second moment.</p>
+<p><span class="math display">\[\psi(\lambda) = \lambda \E_P[X] + \lambda^2 \mathrm{Var}_{P_{\lambda}}[X]/2\]</span></p>
+<p>The RV whose law is <span class="math inline">\(P_{\lambda}\)</span> is still bounded within <span class="math inline">\([a, b]\)</span>, so we have the uniform bound on its variance <span class="math inline">\((b - a)^2/4\)</span> (worst case variance is equal pointmasses on each of <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>). So</p>
+<p><span class="math display">\[\psi(\lambda) = \lambda \E_P[X] + \lambda^2 \frac{(b - a)^2}{8}\]</span></p>
+<p>So the Esscher family being an exponential family made our life super easy. More sophisticated concentration inequalities, like Bernstein and Bennet, have exactly the same template, but we exert finer control over the second moment. It’s really all about the tilted variance.</p>
 
 
 
