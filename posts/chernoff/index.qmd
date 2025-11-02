@@ -37,14 +37,14 @@ Exponential families have many nice properties, including the following
 - 1 $\E_{p_\eta} [T(x)] = \nabla A(\eta)$
 - 2 $\Cov_\eta(T(x)) = \nabla^2 A(\eta)$
 - 3 $\E_\eta[e^{\langle \lambda,  T(x)\rangle }] = A(\eta + \lambda) - A(\eta)$
-- 4 Given data $x_1, ... x_n \sim p_\eta$, the MLE for $\eta$, $\hat{\eta}$ is satisfies $\nabla_\eta A(\hat\eta) = \sum_i T(x_i)/n$
+- 4 Given data $X_1, ... X_n \sim p_\eta$, the MLE for $\eta$, $\hat{\eta}$, satisfies $\nabla_\eta A(\hat\eta) = \sum_i T(X_i)/n$
 - 5 $KL(p_\eta || p_\lambda) = D_A(\lambda || \eta)$ where $D_A$ is the Bregman divergence under $A$. 
 
-These plain lemmas, which can be verified by simple computation, breed copiously amongst themselves to produce theorems that reveal the geometry that underlies so much of classical statistics. We'll scrutinize their progeny later. 
+These plain lemmas, which can be verified by simple computation, breed copiously amongst themselves to produce theorems that reveal the geometry that underlies much of classical statistics. We'll scrutinize their progeny later. 
 
 For now, however, let us simply notice that, for any base (univariate) density $p$, we can define an exponential family by multiplying it by $e^{\lambda x}$ and normalizing appropriately: 
 $$p_\lambda(x) = e^{\lambda x}p(x)/\E_p[e^{\lambda x}] = e^{\lambda x - \log \E [e^{\lambda X}]}p(x)$$
-so that $A(\lambda) = \psi(\lambda) = \log \E [e^{\lambda X}]$ and $\eta = \lambda$. The exponential family $\{p_lambda\}$ is called the "Esscher" family. Thus, whenever we linearly tilt a density, the CGF enters the stage merely as a normalizing constant. However, in its capacity as the log-partition function of the Esscher family, the CGF acquires an interesting role in defining the geometry of $\lambda$-space
+so that $A(\lambda) = \psi(\lambda) = \log \E [e^{\lambda X}]$ and $\eta = \lambda$. The exponential family $\{p_\lambda\}$ is called the "Esscher" family. Thus, whenever we linearly tilt a density, the CGF enters the stage merely as a normalizing constant. However, in its capacity as the log-partition function of the Esscher family, the CGF acquires an interesting role in defining the geometry of $\lambda$-space
 
 If $P$ is a measure (as opposed to a density), we can  define the tilted distribution through the Radon-Nikodym derivative $\frac{dP_\lambda}{dP} = e^{\lambda x - \psi(\lambda)}$. In this note, one can rest assured that essentially nothing is lost by considering this to be a somewhat ostentatious rewrite of the definitional statement $p_\lambda(x)/p(x) = e^{\lambda x - \psi(\lambda)}$ . 
 
@@ -94,7 +94,7 @@ $$KL(P_{\lambda^*} || P) = \lambda^* \E_{P_{\lambda^*}}[X] - \psi(\lambda^*) = \
 
 This is a little better. The Chernoff bound is going to linearly tilt $P$ until the tilted mean is $t$, and then pay for doing so with $e^{-I(t)} = e^{-KL(P_{\lambda^*} || P)}$. So the more we have to linearly tilt $P$ to have the event $t$ be unsurprising, the tighter our tail bound is. 
 
-Here's a pithy phrasing for the bound, as a bonus. we take the MLE estimate for $\lambda$ among the family of linear tilts of $P$ under the observation $x = t$, and see how far it is from $P$ in KL divergence, which is the Bregman divergence $D_\phi(\lambda^* || 0)$.  This can be seen Properties 4 and 5 of Exponential Families above. 
+Here's a pithy phrasing for the bound, as a bonus. we take the MLE estimate for $\lambda$ among the family of linear tilts of $P$ under the observation $x = t$, and see how far it is from $P$ in KL divergence, which is the Bregman divergence $D_\psi(0|| \lambda^*)$.  This can be seen Properties 4 and 5 of Exponential Families above. 
 
 
 ### Proof 4: Project
@@ -120,7 +120,7 @@ The first term is positive, and is zeroed out by $\mu = P_{\lambda^*}$. The seco
 
 So we've proven $\log P[X \geq t] \leq  I(t) = -KL(P_{\lambda^*} || P) = -\min_{\mu \ll P \ : \ \E_\mu X \geq t} KL(\mu || P)$. The first equality was already known to us from the previous section, but the second is new. 
 
-![The KL projection of $P$ onto the set of measures  $\{Q \ : \ \E_Q[X] \geq t\}$ defines the rate function](project.png){width=500px}
+![The KL projection of $P$ onto the set of measures  $\{Q \ : \ \E_Q[X] \geq t\}$ defines the rate function. Figure should read $-\log P(E)$](project.png){width=500px}
 
 ### Duality
 
@@ -143,8 +143,8 @@ Let's make an observation here, so that we can instantiate this machinery for ou
 $$\log \E \exp f(X) = \sup_{Q \ll P} \E_Q f(x) - KL(Q || P)$$
 *Proof:* 
 Let $P_f$ be such that $dP_f/dP = e^{f(x)}/\E_P[e^{f(x)}]$
-$$\max_Q \E_Q[f(X)] - KL(Q || P) = \max_Q \E_Q[f(x)] - \E_Q[\log \frac{dQ}{dP_f}\frac{dP_f}{dP}]$$
-$$= \max_Q \E_Q[f(x)] - KL(Q || P_f) - \E_Q[f(X)] + \log \E_P \exp f(X)$$
+$$\max_Q \E_Q[f(X)] - KL(Q || P) = \max_Q \E_Q[f(X)] - \E_Q[\log \frac{dQ}{dP_f}\frac{dP_f}{dP}]$$
+$$= \max_Q \E_Q[f(X)] - KL(Q || P_f) - \E_Q[f(X)] + \log \E_P \exp f(X)$$
 $$ = \max_Q \log \E_P \exp f(X) - KL(Q || P_f)$$
 
 which is clearly achieved by $Q = P_f$ and takes value $\log \E_P \exp f(X)$
@@ -172,51 +172,69 @@ which is clearly a more general version of the program studied in Proof 4.
 Let $AQ = [\E_Q[f_1(X)], ... \E_Q[f_d(X)]]^T$. Its adjoint is $A^*: \lambda \mapsto \sum_i \lambda_i f_i$ (check!).  By Fenchel duality, we have that
 
 $$\min_{Q \ \ \E_Q[f_i(X)] \geq t_i}KL(Q || P) = \min_Q KL(Q || P) + \sum_{i = 1}^d\iota_{t_i}(\E_Q[f_i(X)])$$
-$$= \sup_\lambda - \Lambda(A^*\lambda) - \sum_{i = 1}^d \iota^*_{t_i}(\lambda_i)$$
-$$= \sup_\lambda \lambda_i t_i - \log \E_P \exp{\sum_i \lambda_i f_i(X)}$$
+$$= \sup_\lambda - \Lambda(A^*\lambda) - \sum_{i = 1}^d \iota^*_{t_i}(-\lambda_i)$$
+$$= \sup_\lambda \sum_{i = 1}^d \lambda_i t_i - \log \E_P \exp{\sum_i \lambda_i f_i(X)}$$
 
 
 So optimizing over an $f$-constrained set of measures in the primal corresponds to optimizing the penalized CGF over the $f$-span in the dual. In particular, our test functions define the constraints $\E_Q[f_i(X)] \geq t_i$ for $i = 1, ..., d$. Let's call these $C_f$. 
 
-Recalling Proof 4, we can notice that as long as the conditional law $P(\cdot | E)$ lies in the constraint set, the projection $P^* = \min_{Q \in C_f}KL(Q || P)$ always defines an upper bound. By adding more constraints to $C_f$ that are satisfied by $P(\cdot | E)$, we make $P^*$ closer to $P(\cdot | E)$ and tighten our bound. In the dual, this corresponds to finding the tightest upper bound (in the $L^1(P)$-norm) to $\sum_i 1\{f_i(x) \geq t_i\}$ that is of the form $e^{\sum_{i = 1}^d \lambda_i f_i(x)}$. When the events $\{f_i(X) \geq t_i\}$ contain the event $\{X\geq t\}$ (as is the case, e.g. when $f_i$ is an increasing function and $t_i = f_i(t)$), this translates into a tail bound for $x$. This is the dual phrasing of what in the primal was the requirement that the constraint set contain $P(\cdot | E)$. 
+Recalling Proof 4, we can notice that as long as the conditional law $P(\cdot | E)$ lies in the constraint set, the projection $P^* = \arg\min_{Q \in C_f}KL(Q || P)$ always defines an upper bound. By adding more constraints to $C_f$ that are satisfied by $P(\cdot | E)$, we make $P^*$ closer to $P(\cdot | E)$ and tighten our bound. 
+
+In the dual ("Circumscribe" picture), when the events $\{f_i(X) \geq t_i\}$ contain the event $\{X\geq t\}$ (as is the case, e.g. when $f_i$ is an increasing function and $t_i = f_i(t)$), this corresponds to optimizing the following numerical upper bound over $\lambda$ in $L^1(P)$ 
+
+$$1\{X > t\} \leq e^{\sum_{i = 1}^d\lambda_i (f_i(X) - t_i)}$$
+
 
 ![As we add constraints that are satisfied by the conditional law, $P(\cdot | E)$, we tighten our approximation, at the cost of making the bound less tractable. As we shall see in the next section, a single linear constraint is asymptotically optimal, in the sense that all other constraints that are satisfied by $P(\cdot | E)$ will become inactive as $n \to \infty$.](many_constraint_sets.png){width=500px}
 
-The Chernoff bound instantiates this machinery with just one, Spartan test function: $f_1(x) = x$, as we saw in Proofs 2, 3, and 4. As we have already seen, optimizing over a single linear test function corresponds to placing a single, linear mean constraint in measure space. You can use Donsker-Varadhan to verify that the $KL$ distance from $P(\cdot | E)$ to $P_{\lambda^*}$ is exactly the $L^1(P)$ error of $e^{\lambda^*(x - t)}$ against $1\{x \geq t\}$. 
+The Chernoff bound instantiates this machinery with just one Spartan test function: $f_1(x) = x$, as we saw in Proofs 2, 3, and 4. As we have already seen, optimizing over a single linear test function corresponds to placing a single, linear mean constraint in measure space. You can use Donsker-Varadhan to verify that the $KL$ distance from $P(\cdot | E)$ to $P_{\lambda^*}$ is exactly the log of the $L^1(P)$ slack of $e^{\lambda^*(X - t)}$ against $1\{X \geq t\}$. 
 
-Why don't we use more test functions? This would make our approximation $P_f$ closer to $P(\cdot | E)$. It turns out that a single linear test-function is sufficient to get the right bound as $n \to \infty$. In the final section, we show how Proof 3 allows us to intuit this.
+Why don't we use more test functions? This would make our approximation $P_f$ closer to $P(\cdot | E)$. For sample averages $X^n = \frac{1}{n}\sum_{i = 1}^n X_i$, it turns out that a single linear test-function is sufficient to get the right bound as $n \to \infty$. In the final section, we show how Proof 3 allows us to intuit this.
 
-**Remark:** We can bring the last section back to exponential families, too. In particular, we define an exponential family with parameters, $\lambda_1, ..., \lambda_d$ and sufficient statistics $f = [f_1, ..., f_d]$:
-$$p_{\lambda, f} = p(x) e^{\langle \lambda, f(x)\rangle - \Lambda_f (\lambda)}$$
-where the log partition function is $\Lambda_f = \log \E[e^{\sum_{i = 1}^d \lambda_if_i(X)}]$. 
+**Remark:** We can bring the last section back to exponential families, too. In particular, we define an exponential family with parameters $\lambda_1,\ldots,\lambda_d$ and sufficient statistics $f=[f_1,\ldots,f_d]$:
+$$
+p_{\lambda,f}(x)=p(x)\,\exp\{\langle \lambda, f(x)\rangle-\Lambda_f(\lambda)\},
+$$
+where the log-partition function is
+$$
+\Lambda_f(\lambda)=\log \E\!\left[e^{\sum_{i=1}^d \lambda_i f_i(X)}\right].
+$$
 Then, we can define
 
-- $p_{\lambda^m, f}$ is the measure that minimizes KL distance from $p$ among all family members with $\E[f_i(x)] \geq t_i$. 
-- $p_{\lambda^d, f}$ is the MLE given the observation $f(x) = t$
-- $p_{\lambda^p, f}$ is the KL projection of the *empirical* distribution onto the Esscher family. 
+- $p_{\lambda^m,f}$ is the family member that minimizes $KL\!\big(p_{\lambda,f}\,\|\,p\big)$ among those with $\E_{p_{\lambda,f}}[f_i(X)]\ge t_i$ *(active coordinates are tight; $\lambda^m\succeq 0$ under “$\ge$”)*.
+- $p_{\lambda^d,f}$ is the MLE given the observation $f(X)=t$.
+- $p_{\lambda^p,f}$ is the KL projection of the *empirical* distribution $\hat P$ onto the family *(i.e., minimizes $KL(\hat P\,\|\,p_{\lambda,f})$)*.
 
-Due to the properties of exponential families, $\lambda^m = \lambda^d = \lambda^p$. This restates the well-known facts that (a) MLE in an exponential family is nothing but projection of the empirical distribution onto the family ($\lambda^p = \lambda^d$) (b) MLE in an exponential family can be computed by moment matching ($\lambda^m = \lambda^d$). Both are concrete instances of the Donsker–Varadhan variational principle specialized to linear tilts.
+Due to the properties of exponential families, $\lambda^m=\lambda^d=\lambda^p$. This restates the well-known facts that (a) MLE in an exponential family is nothing but projection of the empirical distribution onto the family $(\lambda^p=\lambda^d)$; (b) MLE in an exponential family can be computed by moment matching $(\lambda^m=\lambda^d)$. Both are concrete instances of the Donsker–Varadhan variational principle specialized to linear tilts.
 
 # Lower bound
 
-Let us now consider the tails of the random variable $X^n := \frac{1}{n}\sum_{i = 1}^n X_i$, and prove a lower bound that says that we don't gain anything (asymptotically) by expanding our list of test functions. We call $X^n$'s' law $P_n$, derived from the marginal law $X \sim P$. 
+Let us now consider the tails of the random variable $X^n := \frac{1}{n}\sum_{i = 1}^n X_i$, and prove a lower bound that says that we don't gain anything (asymptotically) by expanding our list of test functions. We call $X^n$'s law $P_n$, derived from the marginal law $X \sim P$.
 
-It's hard to get a lower bound out of the geometric perspective; the KL divergence, ever indifferent to the axioms of distances, is more useful for getting upper bounds. Therefore, we return to Proof 3 to show that the change of measure argument is tight. 
+It's hard to get a lower bound out of the geometric perspective; this is due to the KL divergence's aggressive indifference to the axioms of distance. Therefore, we return to Proof 3 to show that the change of measure argument is tight. 
 
-In particular, we'll gesture at Cramer's theorem, which says that if the CGF is finite in a neighborhood of zero, then
+In particular, we'll gesture at Cramer's theorem, which essentially says that if the CGF is finite in a neighborhood of zero, then
 $$\lim\sup \frac{1}{n} \log \Pr[X^n \geq t] = -I(t)$$
 
-Let's just define $A_n = \{X^n \in [t, t + \epsilon\}$ for some $\epsilon > 0$. Now, defining $P_{\lambda^* _n} = (P_{\lambda^*})^{\otimes n}$, we have
+Let's define $A_n = \{X^n \in [t, t + \epsilon]\}$ for some $\epsilon > 0$. Now, defining $P_{\lambda^*, n} = (P_{\lambda^*})^{\otimes n}$, we have
+$$
+P_n(A_n) = \E_{P_n}[1\{A_n\}]
+= \E_{P_{\lambda^*, n}}\!\left[e^{-\big(n\lambda^* X^n - \psi_n(\lambda^*)\big)}\,1\{A_n\}\right]
+$$
+$$
+\geq P_{\lambda^*, n}(A_n) \times e^{-n\big(\lambda^*(t+\epsilon) - \psi(\lambda^*)\big)}
+= \left(\tfrac{1}{2} + o(1)\right) \times e^{-n I(t) - n\lambda^* \epsilon},
+$$
+where we used $\psi_n(\lambda)=n\psi(\lambda)$, the fact that on $A_n$ we have $X^n \le t+\epsilon$, and the CLT under $P_{\lambda^*, n}$ (with $\psi'(\lambda^*)=t$) to get $P_{\lambda^*, n}(A_n)\to \tfrac12$. We can now take $\epsilon \downarrow 0$. In English, the Proof 3 perspective allows us to apply exact limit theorems to the tilted distribution at the cost of the likelihood ratio evaluated within an $\epsilon$-ball around $t$. Shrinking $\epsilon$ makes the likelihood ratio approach $e^{-n I(t)}$.
 
-$$P_n(E) = \E_{P_n}[1\{A_n\}]$$
-$$= \E_{P_{\lambda^*, n}}[e^{\lambda^* X_n - \psi_n(\lambda^*)}1\{A_n\}]$$
-$$\geq P_{\lambda^*_n}(A_n) \times  e^{\lambda^* (t + \epsilon) - \psi_n(\lambda^*)}$$
-$$=  (\frac{1}{2} + o(1)) \times e^{-n I(t) + \lambda^* \epsilon}$$
 
-where the final line holds by CLT applied to $P_{\lambda^*, n}$. We can now take $\epsilon \downarrow 0$. In English, the Proof 3 perspective allows us to apply exact limit theorems to the tilted distribution at the cost of the likelihood ratio evaluated within an $\epsilon$-ball around $t$. Shrinking the $\epsilon$ makes the likelihood ratio appraoch $e^{-n I(t)}$. 
+
+
+
+
 
 
 
 # Next time
 
-We'll see how algorithms for online prediction and boosting use nearly the same procedures to get regret bounds in adversarial settings.
+We'll see how algorithms for online prediction and boosting use nearly the same analyses to get regret bounds in adversarial settings.

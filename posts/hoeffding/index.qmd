@@ -34,9 +34,9 @@ $$\psi(\lambda) = \psi(0) + \lambda \psi'(0) + \lambda^2\psi''(\zeta)/2 \ \ \ \z
 
 so that 
 
-$$\psi(\lambda) = \lambda \E_P[X] + \lambda^2 \mathrm{Var}_{P_{\lambda}}[X]/2$$
+$$\psi(\lambda) = \lambda \E_P[X] + \lambda^2 \mathrm{Var}_{P_{\zeta}}[X]/2$$
 
-The RV whose law is $P_{\lambda}$ is still bounded within $[a, b]$, so we have the uniform bound on its variance $(b - a)^2/4$ (worst case variance is equal pointmasses on each of $a$ and $b$). So 
+The RV whose law is $P_{\zeta}$ is still bounded within $[a, b]$, so we have the uniform bound on its variance $(b - a)^2/4$ (worst case variance is equal pointmasses on each of $a$ and $b$). So 
 
 $$\psi(\lambda) = \lambda \E_P[X] + \lambda^2 \frac{(b - a)^2}{8}$$
 

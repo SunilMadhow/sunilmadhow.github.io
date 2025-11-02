@@ -207,8 +207,8 @@ window.Quarto = {
 <p>Taylor expanding <span class="math inline">\(\psi\)</span> around <span class="math inline">\(0\)</span> gives</p>
 <p><span class="math display">\[\psi(\lambda) = \psi(0) + \lambda \psi'(0) + \lambda^2\psi''(\zeta)/2 \ \ \ \zeta \in [0, \lambda]\]</span></p>
 <p>so that</p>
-<p><span class="math display">\[\psi(\lambda) = \lambda \E_P[X] + \lambda^2 \mathrm{Var}_{P_{\lambda}}[X]/2\]</span></p>
-<p>The RV whose law is <span class="math inline">\(P_{\lambda}\)</span> is still bounded within <span class="math inline">\([a, b]\)</span>, so we have the uniform bound on its variance <span class="math inline">\((b - a)^2/4\)</span> (worst case variance is equal pointmasses on each of <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>). So</p>
+<p><span class="math display">\[\psi(\lambda) = \lambda \E_P[X] + \lambda^2 \mathrm{Var}_{P_{\zeta}}[X]/2\]</span></p>
+<p>The RV whose law is <span class="math inline">\(P_{\zeta}\)</span> is still bounded within <span class="math inline">\([a, b]\)</span>, so we have the uniform bound on its variance <span class="math inline">\((b - a)^2/4\)</span> (worst case variance is equal pointmasses on each of <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span>). So</p>
 <p><span class="math display">\[\psi(\lambda) = \lambda \E_P[X] + \lambda^2 \frac{(b - a)^2}{8}\]</span></p>
 <p>So the Esscher family being an exponential family made our life super easy. More sophisticated concentration inequalities, like Bernstein and Bennet, have exactly the same template, but we exert finer control over the second moment. It’s really all about the tilted variance.</p>
 

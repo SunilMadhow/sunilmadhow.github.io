@@ -7,7 +7,7 @@ format:
 
 <img src="headshot.jpg" alt="Sunil Madhow headshot" style="max-width: 160px; border-radius: 12px; margin-bottom: 0.5rem;">
 
-I'm a PhD student at **UC San Diego (Halıcıoğlu Data Science Institute)**. I work on **statistical learning theory** and **adaptive algorithms** for real-world data, with interests in **reinforcement learning**, **non-parametric statistics**, **online learning**, and lately **diffusion models**.
+I'm a PhD student at **UC San Diego (Halıcıoğlu Data Science Institute)**, where I am grateful to be advised by Yu-Xiang Wang. I work on **statistical learning theory** and **adaptive algorithms** for real-world data, with interests in **reinforcement learning**, **non-parametric statistics**, **online learning**, and lately **diffusion models**.
 
 - 📬 Email: <smadhow@ucsd.edu>
 - 🔗 Links: [Google Scholar](#), [GitHub](https://github.com/SunilMadhow), [LinkedIn](https://www.linkedin.com/in/sunil-madhow)
