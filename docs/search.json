@@ -4,7 +4,7 @@
     "href": "publications.html",
     "title": "Publications",
     "section": "",
-    "text": "Rates for offline reinforcement learning with adaptively collected data (L4DC 2025). With D. Qiao, M. Yin, and Y.-X. Wang. Preprint: https://arxiv.org/abs/2306.1406\n\nAKORN: Adaptive knots generated online for regression splines (ICML 2025). With D. Baby and Y.-X. Wang. Code: https://github.com/SunilMadhow/AKORN"
+    "text": "“Deep lifts”: Neural networks can generalize even with the dumbest optimizer\nSunil Madhow and Yu-Xiang Wang.\nManuscript, 2026.\narXiv\nLearnable Chernoff Baselines for Inference-Time Alignment\nSunil Madhow, Yuchen Liang, Ness Shroff, Yingbin Liang, and Yu-Xiang Wang.\nAdvances in Neural Information Processing Systems (NeurIPS), 2026.\narXiv\nAKORN: Adaptive knots generated online for regression splines\nSunil Madhow, Dheeraj Baby, and Yu-Xiang Wang.\nInternational Conference on Machine Learning (ICML), 2025.\nPaper · Code\nRates for offline reinforcement learning with adaptively collected data\nSunil Madhow, Dan Qiao, Ming Yin, and Yu-Xiang Wang.\nLearning for Dynamics and Control (L4DC), 2025.\nPaper · arXiv"
   },
   {
     "objectID": "posts/chernoff/index.html",

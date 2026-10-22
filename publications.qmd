@@ -2,5 +2,22 @@
 title: "Publications"
 ---
 
-- **Rates for offline reinforcement learning with adaptively collected data** (L4DC 2025). With D. Qiao, M. Yin, and Y.-X. Wang. Preprint: <https://arxiv.org/abs/2306.1406>  
-- **AKORN: Adaptive knots generated online for regression splines** (ICML 2025). With D. Baby and Y.-X. Wang. Code: <https://github.com/SunilMadhow/AKORN>
+**"Deep lifts": Neural networks can generalize even with the dumbest optimizer**\
+Sunil Madhow and Yu-Xiang Wang.\
+*Manuscript, 2026.*\
+[arXiv](https://arxiv.org/abs/2610.23009)
+
+**Learnable Chernoff Baselines for Inference-Time Alignment**\
+Sunil Madhow, Yuchen Liang, Ness Shroff, Yingbin Liang, and Yu-Xiang Wang.\
+*Advances in Neural Information Processing Systems (NeurIPS), 2026.*\
+[arXiv](https://arxiv.org/abs/2602.07738)
+
+**AKORN: Adaptive knots generated online for regression splines**\
+Sunil Madhow, Dheeraj Baby, and Yu-Xiang Wang.\
+*International Conference on Machine Learning (ICML), 2025.*\
+[Paper](https://proceedings.mlr.press/v267/madhow25a.html) · [Code](https://github.com/SunilMadhow/AKORN)
+
+**Rates for offline reinforcement learning with adaptively collected data**\
+Sunil Madhow, Dan Qiao, Ming Yin, and Yu-Xiang Wang.\
+*Learning for Dynamics and Control (L4DC), 2025.*\
+[Paper](https://mingyin0312.github.io/assets/pdf/Madhow034.pdf) · [arXiv](https://arxiv.org/abs/2306.14063)
